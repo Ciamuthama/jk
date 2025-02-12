@@ -53,8 +53,9 @@ class JsonKeeperCLI
     print "Enter the filename (without .json extension): "
     filename = gets.chomp.strip
 
-    print "Enter JSON content (or press enter for an empty object{}): "
-end
+    print "Enter JSON content (or press enter for an empty objectz{}): "
 
+  end
+end
 # Start the CLI
 JsonKeeperCLI.new.start
