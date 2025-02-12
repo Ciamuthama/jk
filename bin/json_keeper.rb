@@ -38,7 +38,7 @@ class JsonKeeperCLI
     when "2"
         read_json_prompt
     when "3"
-      puts "Feature not implemented yet!"
+        update_json_prompt
     when "4"
       puts "Feature not implemented yet!"
     when "5"
@@ -53,7 +53,7 @@ class JsonKeeperCLI
     print "Enter the filename (without .json extension): "
     filename = gets.chomp.strip
 
-    print "Enter JSON content (or press enter for an empty objectz{}): "
+    print "Enter JSON content (or press enter for an empty object{}): "
 
   end
 
@@ -65,5 +65,26 @@ class JsonKeeperCLI
     @keeper.read_json(filename)
   end
 end
+
+def update_json_prompt
+  print "Enter the filename (without .json extension): "
+  filename = gets.chomp.strip
+
+  print "Enter the key to update (or create if it doesn't exist): "
+  key = gets.chomp.strip
+
+  print "Enter the new value for '#{key}': "
+  value = gets.chomp.strip
+  
+  @keeper.update_json(filename, key, value)
+end
+
+def delete_json_prompt
+  print "Enter the filename (without .json extension) to delete: "
+  filename = gets.chomp.strip
+
+  @keeper.delete_json(filename)
+end
+
 # Start the CLI
 JsonKeeperCLI.new.start
