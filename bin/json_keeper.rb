@@ -36,7 +36,7 @@ class JsonKeeperCLI
     when "1"
         create_json_prompt
     when "2"
-      puts "Feature not implemented yet!"
+        read_json_prompt
     when "3"
       puts "Feature not implemented yet!"
     when "4"
@@ -55,6 +55,14 @@ class JsonKeeperCLI
 
     print "Enter JSON content (or press enter for an empty objectz{}): "
 
+  end
+
+  
+  def read_json_prompt
+    print "Enter the filename (without .json extension) to read: "
+    filename = gets.chomp.strip
+
+    @keeper.read_json(filename)
   end
 end
 # Start the CLI
