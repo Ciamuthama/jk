@@ -4,6 +4,7 @@ require_relative '../lib/json_keeper'
 
 class JsonKeeperCLI
   def initialize
+    @keeper = JsonKeeper.new
     @running = true
   end
 
@@ -33,7 +34,7 @@ class JsonKeeperCLI
 
     case choice
     when "1"
-      puts "Feature not implemented yet!"
+        create_json_prompt
     when "2"
       puts "Feature not implemented yet!"
     when "3"
@@ -47,6 +48,12 @@ class JsonKeeperCLI
       puts "Invalid choice, please try again."
     end
   end
+
+  def create_json_prompt
+    print "Enter the filename (without .json extension): "
+    filename = gets.chomp.strip
+
+    print "Enter JSON content (or press enter for an empty object{}): "
 end
 
 # Start the CLI
