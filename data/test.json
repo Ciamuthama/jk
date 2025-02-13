@@ -1,7 +1,9 @@
 {
-  "name": [
-    "peter",
-    "muthama",
-    "ngigi"
-  ]
+  "name": "peter",
+  "occupation": {
+    "one": "software engineer the best",
+    "two": "graphic designer",
+    "three": "photographer"
+  },
+  "age": 26
 }

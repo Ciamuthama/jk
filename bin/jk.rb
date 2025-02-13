@@ -116,17 +116,40 @@ class JsonKeeperCLI
     print "Enter the filename (without .json extension): "
     filename = gets.chomp.strip
   
-    data = {}
+    filepath = File.join(JsonKeeper::DATA_FOLDER, "#{filename}.json")
+    
+    unless File.exist?(filepath)
+      puts "Error: File '#{filename}.json' does not exist! 🚫"
+      return
+    end
+  
+    data = JSON.parse(File.read(filepath)) # Read existing data
   
     loop do
       print "Enter the key to update (or press enter to finish): "
       key = gets.chomp.strip
       break if key.empty?
   
-      print "Enter the new value for '#{key}': "
-      value = gets.chomp.strip
+      print "Do you want to nest an object inside '#{key}'? (y/n): "
+      nest_choice = gets.chomp.downcase
   
-      data[key] = @keeper.parse_value(value)
+      if nest_choice == "y"
+        nested_data = {}
+        loop do
+          print "Enter nested key (or press enter to finish): "
+          nested_key = gets.chomp.strip
+          break if nested_key.empty?
+  
+          print "Enter value for '#{nested_key}': "
+          nested_value = gets.chomp.strip
+          nested_data[nested_key] = @keeper.parse_value(nested_value)
+        end
+        data[key] = nested_data
+      else
+        print "Enter the new value for '#{key}' (comma-separated for list): "
+        value = gets.chomp.strip
+        data[key] = value.include?(",") ? value.split(",").map(&:strip) : @keeper.parse_value(value)
+      end
     end
   
     if data.empty?
@@ -134,10 +157,11 @@ class JsonKeeperCLI
       return
     end
   
-    data.each do |key, value|
-      @keeper.update_json(filename, key, value)
-    end
+    # Save everything at once
+    File.write(filepath, JSON.pretty_generate(data))
+    puts "✅ Success: Updated '#{filename}.json' with new values!"
   end
+  
   
   
 
