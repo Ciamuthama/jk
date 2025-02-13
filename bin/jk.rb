@@ -26,7 +26,8 @@ class JsonKeeperCLI
     puts "2. Read an existing JSON file"
     puts "3. Update a JSON file"
     puts "4. Delete a JSON file"
-    puts "5. Exit"
+    puts "5. Delete a key from a JSON file"
+    puts "6. Exit"
     puts "----------------------"
     print "Enter your choice: "
   end
@@ -44,60 +45,128 @@ class JsonKeeperCLI
     when "4"
         delete_json_prompt
     when "5"
+        delete_key_prompt
+    when "6"
       puts "Goodbye!👋"
       @running = false
     else
-      puts "Invalid choice, please try again."
+      puts "😵 Invalid choice, please try again."
     end
   end
 
   def create_json_prompt
     print "Enter the filename (without .json extension): "
     filename = gets.chomp.strip
-
-    print "Enter a key (or leave empty for an empty object): "
-    key = gets.chomp.strip
-
-    if key.empty?
-      @keeper.create_json(filename, {})
-      return
+  
+    data = {}
+  
+    loop do
+      print "Enter a key (or press enter to finish): "
+      key = gets.chomp.strip
+      break if key.empty?
+  
+      print "Do you want to nest an object inside '#{key}'? (y/n): "
+      nest_choice = gets.chomp.downcase
+  
+      if nest_choice == "y"
+        nested_data = {}
+        loop do
+          print "Enter nested key (or press enter to finish): "
+          nested_key = gets.chomp.strip
+          break if nested_key.empty?
+  
+          print "Enter value for '#{nested_key}': "
+          nested_value = gets.chomp.strip
+          nested_data[nested_key] = @keeper.parse_value(nested_value)
+        end
+        data[key] = nested_data
+      else
+        print "Enter a value for '#{key}' (comma-separated for list): "
+        value = gets.chomp.strip
+  
+        # Convert comma-separated values to an array
+        data[key] = value.include?(",") ? value.split(",").map(&:strip) : @keeper.parse_value(value)
+      end
     end
-
-    print "Enter a value for '#{key}': "
-    value = gets.chomp.strip
-
-    @keeper.create_json(filename, { key => @keeper.parse_value(value) })
+  
+    if data.empty?
+      puts "Creating an empty JSON file..."
+    end
+  
+    @keeper.create_json(filename, data)
   end
+  
+  
 
 
   
   def read_json_prompt
-    print "Enter the filename (without .json extension) to read: "
+    print "Enter the filename (without .json extension): "
+    filename = gets.chomp.strip
+  
+    print "Enter a key to retrieve (or press Enter to display the whole file): "
+    key = gets.chomp.strip
+    key = nil if key.empty?
+  
+    @keeper.read_json(filename, key)
+  end
+  
+
+  def update_json_prompt
+    print "Enter the filename (without .json extension): "
+    filename = gets.chomp.strip
+  
+    data = {}
+  
+    loop do
+      print "Enter the key to update (or press enter to finish): "
+      key = gets.chomp.strip
+      break if key.empty?
+  
+      print "Enter the new value for '#{key}': "
+      value = gets.chomp.strip
+  
+      data[key] = @keeper.parse_value(value)
+    end
+  
+    if data.empty?
+      puts "No updates made."
+      return
+    end
+  
+    data.each do |key, value|
+      @keeper.update_json(filename, key, value)
+    end
+  end
+  
+  
+
+  def delete_json_prompt
+    print "Enter the filename (without .json extension) to delete: "
     filename = gets.chomp.strip
 
-    @keeper.read_json(filename)
+    @keeper.delete_json(filename)
   end
+
+
+  def delete_key_prompt
+    print "Enter the filename (without .json extension): "
+    filename = gets.chomp.strip
+
+    loop do
+      print "Enter the key to delete: "
+      key = gets.chomp.strip
+      break if key.empty?
+
+      @keeper.delete_key(filename, key)
+      puts "Key '#{key}' deleted."
+
+      print "Do you want to delete another key? (y/n): "
+      continue = gets.chomp.strip.downcase
+      break unless continue == 'y'
+    end
+  end
+
 end
-
-def update_json_prompt
-  print "Enter the filename (without .json extension): "
-  filename = gets.chomp.strip
-
-  print "Enter the key to update (or create if it doesn't exist): "
-  key = gets.chomp.strip
-
-  print "Enter the new value for '#{key}': "
-  value = gets.chomp.strip
-  
-  @keeper.update_json(filename, key, value)
-end
-
-def delete_json_prompt
-  print "Enter the filename (without .json extension) to delete: "
-  filename = gets.chomp.strip
-
-  @keeper.delete_json(filename)
-end
-
 # Start the CLI
 JsonKeeperCLI.new.start

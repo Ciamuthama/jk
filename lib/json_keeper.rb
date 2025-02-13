@@ -37,27 +37,28 @@ class JsonKeeper
   
   def read_json(filename, key = nil)
     filepath = File.join(DATA_FOLDER, "#{filename}.json")
-
+  
     unless File.exist?(filepath)
-      puts "Error: File '#{filename}' does not exist! 🚫"
+      puts "Error: File '#{filename}.json' not found! 🚫"
+      return
     end
-
+  
     data = JSON.parse(File.read(filepath))
-
+  
     if key
       if data.key?(key)
-        puts "🏁 Value for '#{key}': #{data[key].inspect}"
+        puts "✅ Value for '#{key}': #{data[key].inspect}"
       else
         puts "⚠️ Key '#{key}' not found in '#{filename}.json'."
       end
-      
     else
       puts "📂 Full JSON Data:"
       puts JSON.pretty_generate(data)
     end
-    
-    data
+  
+    data # Return the data in case it's needed elsewhere
   end
+  
   
 
   def update_json(filename, key, new_value)
@@ -69,39 +70,33 @@ class JsonKeeper
   
     data = JSON.parse(File.read(filepath))
   
-    # Ask the user if they want to create a new key or modify an existing one
-    if data.key?(key)
-      puts "Updating existing key '#{key}'..."
-    else
-      puts "Key '#{key}' does not exist. Creating a new key..."
-    end
-  
-    parsed_value = parse_value(new_value)
-  
     # Detect if the user is adding a nested object
-    if parsed_value.is_a?(String)
-      print "Do you want to nest an object inside '#{key}'? (y/n): "
-      nest_choice = gets.chomp.downcase
+    print "Do you want to nest an object inside '#{key}'? (y/n): "
+    nest_choice = gets.chomp.downcase
   
-      if nest_choice == "y"
-        nested_data = {}
-        loop do
-          print "Enter nested key (or press enter to finish): "
-          nested_key = gets.chomp.strip
-          break if nested_key.empty?
+    if nest_choice == "y"
+      nested_data = {}
+      loop do
+        print "Enter nested key (or press enter to finish): "
+        nested_key = gets.chomp.strip
+        break if nested_key.empty?
   
-          print "Enter value for '#{nested_key}': "
-          nested_value = gets.chomp.strip
-          nested_data[nested_key] = parse_value(nested_value)
-        end
-        parsed_value = nested_data
+        print "Enter value for '#{nested_key}': "
+        nested_value = gets.chomp.strip
+        nested_data[nested_key] = parse_value(nested_value)
       end
+      new_value = nested_data
+    elsif new_value.include?(",")  # Convert comma-separated values into an array
+      new_value = new_value.split(",").map(&:strip)
+    else
+      new_value = parse_value(new_value)
     end
   
-    data[key] = parsed_value
+    data[key] = new_value
     File.write(filepath, JSON.pretty_generate(data))
     puts "✅ Success: Updated '#{key}' in '#{filename}.json'!"
   end
+  
   
 
   def add_nested_object(filename, key, json_string)
@@ -136,6 +131,24 @@ class JsonKeeper
     File.delete(filepath)
     puts "✅ Success: File '#{filename}.json' deleted!"
   end
-  
+
+  def delete_key(filename, key)
+    filepath = File.join(DATA_FOLDER, "#{filename}.json")
+
+    unless File.exist?(filepath)
+      puts "Error: File '#{filename}.json' does not exist! 🚫"
+      return
+    end
+
+    data = JSON.parse(File.read(filepath))
+
+    if data.key?(key)
+      data.delete(key)
+      File.write(filepath, JSON.pretty_generate(data))
+      puts "✅ Success: Key '#{key}' deleted from '#{filename}.json'!"
+    else
+      puts "⚠️ Key '#{key}' not found in '#{filename}.json'."
+    end
+  end
 
 end

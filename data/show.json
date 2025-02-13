@@ -1,0 +1,10 @@
+{
+  "name": "peter",
+  "skills": {
+    "skill1": "software engineer the best",
+    "skill2": "graphic desginer the best"
+  },
+  "job": {
+    "engi": "neer"
+  }
+}
