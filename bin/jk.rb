@@ -35,7 +35,12 @@ class JsonKeeperCLI
   
   def handle_choice
     choice = gets.chomp
-  
+     puts "Debug: received input: '#{choice}'"
+    if choice.nil? || choice.empty?
+      puts "😵 Invalid choice, please try again."
+      return
+    end
+
     case choice
     when "1" then create_json_prompt
     when "2" then read_json_prompt
