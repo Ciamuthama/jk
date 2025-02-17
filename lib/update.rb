@@ -24,8 +24,10 @@ module Update
         nested_data[nested_key] = parse_value(nested_value)
       end
       new_value = nested_data
-    elsif new_value.include?(",")
+
+    elsif new_value.is_a?(String) && new_value.include?(",") 
       new_value = new_value.split(",").map(&:strip)
+
     else
       new_value = parse_value(new_value)
     end
