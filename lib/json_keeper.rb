@@ -151,4 +151,41 @@ class JsonKeeper
     end
   end
 
+  def search_json(filename, query)
+    filepath = File.join(DATA_FOLDER, "#{filename}.json")
+  
+    unless File.exist?(filepath)
+      puts "Error: File '#{filename}.json' does not exist! 🚫"
+      return
+    end
+  
+    data = JSON.parse(File.read(filepath))
+    results = search_in_object(data, query)
+  
+    if results.empty?
+      puts "🔎 No matches found for '#{query}'."
+    else
+      puts "✅ Found #{results.size} match(es):"
+      results.each { |path, value| puts "📌 {#{path}: #{value}}" }
+    end
+  end
+  
+  def search_in_object(obj, query, path = "")
+    results = {}
+  
+    obj.each do |key, value|
+      new_path = path.empty? ? key : "#{path} -> #{key}"
+  
+      if key.include?(query) || value.to_s.include?(query)
+        results[new_path] = value
+      end
+  
+      if value.is_a?(Hash)
+        results.merge!(search_in_object(value, query, new_path))
+      end
+    end
+  
+    results
+  end
+  
 end

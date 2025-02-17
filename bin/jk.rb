@@ -2,6 +2,7 @@
 
 require_relative '../lib/json_keeper'
 
+
 class JsonKeeperCLI
   def initialize
     @keeper = JsonKeeper.new
@@ -27,26 +28,24 @@ class JsonKeeperCLI
     puts "3. Update a JSON file"
     puts "4. Delete a JSON file"
     puts "5. Delete a key from a JSON file"
-    puts "6. Exit"
+    puts "6. Search in a JSON file 🔎"
+    puts "7. Exit"
     puts "----------------------"
     print "Enter your choice: "
   end
+  
 
   def handle_choice
     choice = gets.chomp
-
+  
     case choice
-    when "1"
-        create_json_prompt
-    when "2"
-        read_json_prompt
-    when "3"
-        update_json_prompt
-    when "4"
-        delete_json_prompt
-    when "5"
-        delete_key_prompt
-    when "6"
+    when "1" then create_json_prompt
+    when "2" then read_json_prompt
+    when "3" then update_json_prompt
+    when "4" then delete_json_prompt
+    when "5" then delete_key_prompt
+    when "6" then search_json_prompt  # <-- Added search option
+    when "7"
       puts "Goodbye!👋"
       @running = false
     else
@@ -190,6 +189,17 @@ class JsonKeeperCLI
       break unless continue == 'y'
     end
   end
+
+  def search_json_prompt
+    print "Enter the filename (without .json extension): "
+    filename = gets.chomp.strip
+  
+    print "Enter the search query (key or value): "
+    query = gets.chomp.strip
+  
+    @keeper.search_json(filename, query)
+  end
+  
 
 end
 # Start the CLI
