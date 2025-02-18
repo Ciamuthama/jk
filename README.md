@@ -206,6 +206,11 @@ $ bin/jk.rb
         "age": 25
         }
 ```
+**Example: Create and Read**
+
+https://github.com/user-attachments/assets/52bb51b2-17f4-4f05-a5d0-e39c235c7c84
+
+
 
 ### Updating a JSON File
 
@@ -219,6 +224,12 @@ $ bin/jk.rb
     Enter the key to update (or press enter to finish):   # Press Enter to finish
     ✅ Success: Updated 'users.json' with new values!
 ```
+**Example: Update**
+
+
+https://github.com/user-attachments/assets/ab2d496f-45f8-498e-b17b-ee3290178300
+
+
 
 ### Deleting a JSON File
 
@@ -239,6 +250,11 @@ $ bin/jk.rb
     ✅ Success: Key 'age' deleted from 'users.json'!
     Delete another key? (y/n): n
 ```
+**Example: Delete**
+
+https://github.com/user-attachments/assets/d43c7b47-54c1-43b1-8ee3-85333ea65bcb
+
+
 
 ### Searching in a JSON File
 
@@ -250,6 +266,11 @@ $ bin/jk.rb
     ✅ Found 1 match(es):
     📌 {name: "Alice"}
 ```
+**Example: Delete key & Search**
+
+
+https://github.com/user-attachments/assets/a2643591-2879-4c83-8370-f547bbd8f994
+
 
 ---
 
